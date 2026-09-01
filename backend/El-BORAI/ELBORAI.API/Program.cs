@@ -1,9 +1,13 @@
 
+using ELBORAI.Infrastructure.Persistence;
+using ELBORAI.Infrastructure.Persistence.Seed;
+using Microsoft.EntityFrameworkCore;
+
 namespace ELBORAI.API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +18,26 @@ namespace ELBORAI.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //Add DbContext
+            builder.Services.AddDbContext<ElBoraiDbContext>
+                (options => options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection")));
+            
+
+
             var app = builder.Build();
+
+
+            // Apply EF Core migrations automatically
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider
+                    .GetRequiredService<ElBoraiDbContext>();
+
+                dbContext.Database.Migrate();
+
+                await DataSeeder.SeedAsync(dbContext);
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

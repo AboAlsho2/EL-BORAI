@@ -12,6 +12,8 @@ namespace ELBORAI.Domain.Entities
         public int UserId { get; set; }
         public decimal TotalPrice { get; set; }
 
+        public Payment Payment { get; set; }
+
        // public Stauts OrderStatus { get; set; }
 
     }

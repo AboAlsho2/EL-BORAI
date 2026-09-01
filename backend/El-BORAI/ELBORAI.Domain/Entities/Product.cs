@@ -13,11 +13,11 @@ namespace ELBORAI.Domain.Entities
         public  decimal Price { get; set; }
         public int Stock { get; set; }
         public Category Category { get; set; }
+        public int CategoryId { get; set; }
 
-        public ProductImage Image { get; set; }
+        public int MerchantId { get; set; }
 
-       // public Merchant Merchant { get; set; }
-        //public int MerchantId { get; set; }
+        public User Merchant { get; set; }
 
 
     }
