@@ -1,5 +1,10 @@
 
+using ELBORAI.Application.Interfaces;
+using ELBORAI.Application.Interfaces.Repositories;
+using ELBORAI.Application.Interfaces.Services;
+using ELBORAI.Application.Services;
 using ELBORAI.Infrastructure.Persistence;
+using ELBORAI.Infrastructure.Persistence.Repositories;
 using ELBORAI.Infrastructure.Persistence.Seed;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +27,10 @@ namespace ELBORAI.API
             builder.Services.AddDbContext<ElBoraiDbContext>
                 (options => options.UseSqlServer(
                     builder.Configuration.GetConnectionString("DefaultConnection")));
-            
+            //Dependency Injection 
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 
             var app = builder.Build();
