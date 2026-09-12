@@ -14,7 +14,6 @@ namespace ELBORAI.Domain.Entities
 
         public Payment Payment { get; set; }
 
-       // public Stauts OrderStatus { get; set; }
-
+        public OrderStatus Status { get; set; }
     }
 }

@@ -9,6 +9,7 @@ public class ProductByIdSpecification
         : base(p => p.Id == id)
     {
         AddInclude(p => p.Category);
-        
+        AddInclude(p => p.Merchant);
+
     }
 }

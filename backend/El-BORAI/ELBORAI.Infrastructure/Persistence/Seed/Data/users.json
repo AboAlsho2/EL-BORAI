@@ -1,8 +1,23 @@
 ﻿[
   {
-    "name": "El Borai Store",
+    "name": "Merchant",
     "email": "merchant@elborai.com",
-    "address": "Cairo, Egypt",
-    "phone": "01000000000"
+    "address": "Cairo",
+    "phone": "01000000000",
+    "keycloakUserId": "dev-merchant-001"
+  },
+  {
+    "name": "Customer",
+    "email": "customer@elborai.com",
+    "address": "Cairo",
+    "phone": "01111111111",
+    "keycloakUserId": "dev-customer-001"
+  },
+  {
+    "name": "Admin",
+    "email": "admin@elborai.com",
+    "address": "Cairo",
+    "phone": "01222222222",
+    "keycloakUserId": "dev-admin-001"
   }
 ]

@@ -8,7 +8,7 @@ namespace ELBORAI.Application.Interfaces.Services
 {
     public interface ICurrentUserService
     {
-        int? UserId { get; }
+        string? KeycloakUserId { get; }
 
         bool IsAuthenticated { get; }
 
