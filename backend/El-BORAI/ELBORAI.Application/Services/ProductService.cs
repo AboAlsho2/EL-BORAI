@@ -1,4 +1,5 @@
 ﻿using ELBORAI.Application.DTOs.Products;
+using ELBORAI.Application.Exceptions;
 using ELBORAI.Application.Interfaces;
 using ELBORAI.Application.Interfaces.Repositories;
 using ELBORAI.Application.Interfaces.Services;
@@ -33,20 +34,14 @@ public class ProductService : IProductService
 
     public async Task<ProductDto> CreateAsync(CreateProductDto dto)
     {
-        if (!_currentUserService.IsAuthenticated)
-            throw new UnauthorizedAccessException();
+        if (!_currentUserService.IsAuthenticated || string.IsNullOrEmpty(_currentUserService.KeycloakUserId))
+            throw new UnauthorizedAccessException(
+                "Authentication is required.");
 
         if (!_currentUserService.IsInRole("MERCHANT"))
             throw new UnauthorizedAccessException(
                 "Only merchants can create products.");
 
-        var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
-
-        if (category is null)
-        {
-            throw new KeyNotFoundException(
-                "Category was not found.");
-        }
 
         var keycloakUserId = _currentUserService.KeycloakUserId;
 
@@ -64,6 +59,14 @@ public class ProductService : IProductService
         if (user is null)
         {
             throw new KeyNotFoundException("User not found.");
+        }
+
+        var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
+
+        if (category is null)
+        {
+            throw new KeyNotFoundException(
+                "Category was not found.");
         }
 
         var product = new Product
@@ -142,7 +145,7 @@ public class ProductService : IProductService
         int id,
         UpdateProductDto dto)
     {
-        if (!_currentUserService.IsAuthenticated)
+        if (!_currentUserService.IsAuthenticated || string.IsNullOrEmpty(_currentUserService.KeycloakUserId))
             throw new UnauthorizedAccessException();
 
         if (!_currentUserService.IsInRole("MERCHANT"))
@@ -174,8 +177,8 @@ public class ProductService : IProductService
 
         // 3. Check ownership
         if (product.MerchantId != user.Id)
-            throw new UnauthorizedAccessException();
-
+            throw new ForbiddenException(
+             "You are not allowed to modify this product.");
         // 4. Check category
         var category = await _categoryRepository
             .GetByIdAsync(dto.CategoryId);
@@ -197,9 +200,11 @@ public class ProductService : IProductService
 
         return true;
     }
+   
+    
     public async Task<bool> DeleteAsync(int id)
     {
-        if (!_currentUserService.IsAuthenticated)
+        if (!_currentUserService.IsAuthenticated || string.IsNullOrEmpty(_currentUserService.KeycloakUserId))
             throw new UnauthorizedAccessException();
 
         if (!_currentUserService.IsInRole("MERCHANT"))
@@ -231,8 +236,8 @@ public class ProductService : IProductService
 
         // Ownership check
         if (product.MerchantId != user.Id)
-            throw new UnauthorizedAccessException();
-
+            throw new ForbiddenException(
+                        "You are not allowed to delete this product.");
         // Delete
         _productRepository.Delete(product);
 

@@ -1,5 +1,4 @@
-
-using ELBORAI.API.Exceptions;
+using ELBORAI.Application.Exceptions;
 using ELBORAI.Application.Interfaces;
 using ELBORAI.Application.Interfaces.Repositories;
 using ELBORAI.Application.Interfaces.Services;
@@ -10,7 +9,11 @@ using ELBORAI.Infrastructure.Persistence.Repositories;
 using ELBORAI.Infrastructure.Persistence.Seed;
 using ELBORAI.Infrastructure.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 
 
 namespace ELBORAI.API
@@ -30,7 +33,85 @@ namespace ELBORAI.API
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.OAuth2,
+
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        AuthorizationCode = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri(
+                                "http://localhost:8180/realms/EL-BORAI/protocol/openid-connect/auth"),
+
+                            TokenUrl = new Uri(
+                                "http://localhost:8180/realms/EL-BORAI/protocol/openid-connect/token"),
+
+                            Scopes = new Dictionary<string, string>
+                {
+                    { "openid", "OpenID" },
+                    { "profile", "Profile" },
+                    { "email", "Email" },
+                }
+                        }
+                    }
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "oauth2"
+                }
+            },
+            new[]
+            {
+                "openid",
+                "profile",
+                "email",
+            }
+        }
+    });
+            });
+
+            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+            builder.Services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority =
+                    builder.Configuration["Keycloak:Authority"];
+
+                options.Audience =
+                    builder.Configuration["Keycloak:Audience"];
+
+                options.RequireHttpsMetadata = false;
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    RoleClaimType = "role"
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        Console.WriteLine(
+                            $"JWT ERROR: {context.Exception.Message}");
+
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+            builder.Services.AddAuthorization();
 
             //Add DbContext
             builder.Services.AddDbContext<ElBoraiDbContext>
@@ -53,7 +134,10 @@ namespace ELBORAI.API
             builder.Services.AddValidatorsFromAssemblyContaining<CreateProductDtoValidator>();
             builder.Services.AddScoped(typeof(ValidationFilter<>));
 
+
             var app = builder.Build();
+
+            app.UseHttpsRedirection();
 
             app.UseExceptionHandler();
 
@@ -72,11 +156,16 @@ namespace ELBORAI.API
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+
+                app.UseSwaggerUI(options =>
+                {
+                    options.OAuthClientId("elborai-frontend");
+                    options.OAuthUsePkce();
+                });
             }
 
-            app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

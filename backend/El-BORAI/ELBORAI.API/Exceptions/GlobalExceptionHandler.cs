@@ -1,7 +1,6 @@
+using ELBORAI.Application.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-
-namespace ELBORAI.API.Exceptions;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {
@@ -26,14 +25,29 @@ public class GlobalExceptionHandler : IExceptionHandler
         {
             Status = exception switch
             {
-                UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
-                _ => StatusCodes.Status500InternalServerError
+                UnauthorizedAccessException =>
+                    StatusCodes.Status401Unauthorized,
+
+                ForbiddenException =>
+                    StatusCodes.Status403Forbidden,
+
+                KeyNotFoundException =>
+                    StatusCodes.Status404NotFound,
+
+                _ =>
+                    StatusCodes.Status500InternalServerError
             },
 
             Title = exception switch
             {
                 UnauthorizedAccessException =>
                     "Unauthorized",
+
+                ForbiddenException =>
+                    "Forbidden",
+
+                KeyNotFoundException =>
+                    "Resource Not Found",
 
                 _ =>
                     "An unexpected error occurred."
@@ -44,6 +58,12 @@ public class GlobalExceptionHandler : IExceptionHandler
                 UnauthorizedAccessException =>
                     "Authentication is required to perform this operation.",
 
+                ForbiddenException =>
+                    exception.Message,
+
+                KeyNotFoundException =>
+                    exception.Message,
+
                 _ =>
                     "An unexpected error occurred while processing the request."
             },
@@ -52,7 +72,7 @@ public class GlobalExceptionHandler : IExceptionHandler
         };
 
         httpContext.Response.StatusCode =
-            problemDetails.Status.Value;
+            problemDetails.Status!.Value;
 
         await httpContext.Response.WriteAsJsonAsync(
             problemDetails,

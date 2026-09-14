@@ -16,4 +16,8 @@
     <ProjectReference Include="..\ELBORAI.Domain\ELBORAI.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
+  </ItemGroup>
+
 </Project>

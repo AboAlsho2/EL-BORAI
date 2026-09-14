@@ -1,5 +1,6 @@
 using ELBORAI.Application.DTOs.Products;
 using ELBORAI.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ELBORAI.API.Controllers;
@@ -34,6 +35,7 @@ public class ProductsController : ControllerBase
         return Ok(product);
     }
 
+    [Authorize(Roles = "MERCHANT")]
     [HttpPost]
     [ServiceFilter(typeof(ValidationFilter<CreateProductDto>))]
     public async Task<ActionResult<ProductDto>> Create(
@@ -47,6 +49,7 @@ public class ProductsController : ControllerBase
             product);
     }
 
+    [Authorize(Roles = "MERCHANT")]
     [HttpPut("{id:int}")]
     [ServiceFilter(typeof(ValidationFilter<UpdateProductDto>))]
     public async Task<IActionResult> Update(
@@ -61,6 +64,7 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "MERCHANT")]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
