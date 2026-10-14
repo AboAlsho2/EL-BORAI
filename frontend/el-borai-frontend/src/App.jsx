@@ -2,6 +2,8 @@
 import { Route, Routes } from 'react-router'
 import MainLayout from './layouts/MainLayout'
 import PlaceholderPage from './pages/PlaceholderPage'
+import ProductsPage from './Pages/ProductsPage'
+import CartPage from './Pages/CartPage'
 export default function App() {
   return (
     <Routes>
@@ -19,10 +21,7 @@ export default function App() {
         <Route
           path="/products"
           element={
-            <PlaceholderPage
-              title="Products"
-              description="Browse available products."
-            />
+            <ProductsPage/>
           }
         />
 
@@ -38,7 +37,7 @@ export default function App() {
 
         <Route
           path="/cart"
-          element={<PlaceholderPage title="Cart" />}
+          element={<CartPage/>}
         />
 
         <Route
