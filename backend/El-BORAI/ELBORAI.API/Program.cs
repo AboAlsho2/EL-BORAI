@@ -113,6 +113,17 @@ namespace ELBORAI.API
 
             builder.Services.AddAuthorization();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("FrontendPolicy", policy =>
+                {
+                    policy
+                        .WithOrigins("http://localhost:5173")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
             //Add DbContext
             builder.Services.AddDbContext<ElBoraiDbContext>
                 (options => options.UseSqlServer(
@@ -164,6 +175,7 @@ namespace ELBORAI.API
                 });
             }
 
+            app.UseCors("FrontendPolicy");
 
             app.UseAuthentication();
             app.UseAuthorization();
