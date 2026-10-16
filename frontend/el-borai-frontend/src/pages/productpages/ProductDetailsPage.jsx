@@ -1,8 +1,8 @@
 
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import { useCart } from "../context/useCart";
-import { getProductById } from "../services/productService";
+import { useCart } from "../../context/useCart";
+import { getProductById } from "../../services/productService";
 
 export default function ProductDetailsPage() {
   const { id } = useParams();

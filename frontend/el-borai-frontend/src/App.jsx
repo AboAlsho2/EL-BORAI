@@ -3,11 +3,15 @@ import { Route, Routes } from "react-router";
 
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
-import ProductsPage from "./pages/ProductsPage";
-import ProductDetailsPage from "./pages/ProductDetailsPage";
+import ProductsPage from "./pages/productpages/ProductsPage";
+import ProductDetailsPage from "./pages/productpages/ProductDetailsPage";
 import CartPage from "./pages/CartPage";
 import ComingSoonPage from "./pages/ComingSoonPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import MerchantProductsPage from "./pages/merchantpages/MerchantProductsPage";
+import CreateProductPage from "./pages/merchantpages/CreateProductPage";
+import EditProductPage from "./pages/merchantpages/EditProductPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
   return (
@@ -16,6 +20,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
 
         <Route path="/products" element={<ProductsPage />} />
+
         <Route
           path="/products/:id"
           element={<ProductDetailsPage />}
@@ -25,32 +30,56 @@ export default function App() {
 
         <Route
           path="/checkout"
-          element={<ComingSoonPage title="Checkout" />}
+          element={
+            <ProtectedRoute requiredRole="CUSTOMER">
+              <ComingSoonPage title="Checkout" />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/orders"
-          element={<ComingSoonPage title="My Orders" />}
+          element={
+            <ProtectedRoute requiredRole="CUSTOMER">
+              <ComingSoonPage title="My Orders" />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/orders/:id"
-          element={<ComingSoonPage title="Order Details" />}
+          element={
+            <ProtectedRoute requiredRole="CUSTOMER">
+              <ComingSoonPage title="Order Details" />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/merchant/products"
-          element={<ComingSoonPage title="Merchant Products" />}
+          element={
+            <ProtectedRoute requiredRole="MERCHANT">
+              <MerchantProductsPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/merchant/products/new"
-          element={<ComingSoonPage title="Create Product" />}
+          element={
+            <ProtectedRoute requiredRole="MERCHANT">
+              <CreateProductPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/merchant/products/:id/edit"
-          element={<ComingSoonPage title="Edit Product" />}
+          element={
+            <ProtectedRoute requiredRole="MERCHANT">
+              <EditProductPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route path="*" element={<NotFoundPage />} />

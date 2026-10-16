@@ -1,8 +1,8 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { useCart } from "../context/useCart";
-import { getProducts } from "../services/productService";
+import { useCart } from "../../context/useCart";
+import { getProducts } from "../../services/productService";
 
 export default function ProductsPage() {
   const { items, addItem } = useCart();
