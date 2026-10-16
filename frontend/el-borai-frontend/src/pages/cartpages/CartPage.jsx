@@ -1,5 +1,5 @@
 
-import { useCart } from "../context/useCart";
+import { useCart } from "../../context/useCart";
 
 export default function CartPage() {
   const {
@@ -7,6 +7,8 @@ export default function CartPage() {
     removeItem,
     updateQuantity,
     clearCart,
+    isLoading,
+    error,
   } = useCart();
 
   const totalQuantity = items.reduce(
@@ -19,49 +21,74 @@ export default function CartPage() {
     0
   );
 
+  const formatPrice = (price) =>
+    new Intl.NumberFormat("en-EG", {
+      style: "currency",
+      currency: "EGP",
+    }).format(price);
+
   return (
     <main>
       <h1>Shopping Cart</h1>
 
-      {items.length === 0 ? (
+      {error && <p role="alert">{error}</p>}
+
+      {isLoading ? (
+        <p>Loading cart...</p>
+      ) : items.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
         <>
-      {items.map((item) => (
-        <div key={item.id}>
-          <h2>{item.name}</h2>
+          {items.map((item) => (
+            <div key={item.id}>
+              <h2>{item.name}</h2>
 
-          <p>Price: {item.price}</p>
+              <p>Price: {formatPrice(item.price)}</p>
+              <p>Quantity: {item.quantity}</p>
+              <p>
+                Subtotal: {formatPrice(item.price * item.quantity)}
+              </p>
 
-          <p>Quantity: {item.quantity}</p>
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={() =>
+                  updateQuantity(item.id, item.quantity - 1)
+                }
+              >
+                -
+              </button>
 
-          <button
-            onClick={() =>
-              updateQuantity(item.id, item.quantity - 1)
-            }
-          >
-            -
-          </button>
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={() =>
+                  updateQuantity(item.id, item.quantity + 1)
+                }
+              >
+                +
+              </button>
 
-          <button
-            onClick={() =>
-              updateQuantity(item.id, item.quantity + 1)
-            }
-          >
-            +
-          </button>
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={() => removeItem(item.id)}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
 
-          <button
-            onClick={() => removeItem(item.id)}
-          >
-            Remove
-          </button>
-        </div>
-      ))}
+          <hr />
 
           <p>Total quantity: {totalQuantity}</p>
-          <p>Total price: {totalPrice}</p>
-          <button onClick={clearCart}>
+          <p>Total price: {formatPrice(totalPrice)}</p>
+
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={clearCart}
+          >
             Clear Cart
           </button>
         </>

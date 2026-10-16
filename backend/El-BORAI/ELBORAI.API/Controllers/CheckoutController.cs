@@ -1,12 +1,14 @@
 using ELBORAI.Application.DTOs.Orders;
 using ELBORAI.Application.DTOs.Payment;
 using ELBORAI.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ELBORAI.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CheckoutController : ControllerBase
 {
     private readonly ICheckoutService _checkoutService;

@@ -1,11 +1,13 @@
 using ELBORAI.Application.DTOs.Orders;
 using ELBORAI.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ELBORAI.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class OrdersController : ControllerBase
 {
     private readonly IOrderService _orderService;
@@ -45,6 +47,7 @@ public class OrdersController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "ADMIN")]
     [HttpPut("{id:int}/status")]
     [ServiceFilter(typeof(ValidationFilter<UpdateOrderStatusDto>))]
     public async Task<IActionResult> UpdateStatus(

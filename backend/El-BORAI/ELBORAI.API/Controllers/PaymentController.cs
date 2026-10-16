@@ -2,12 +2,14 @@ using ELBORAI.Application.DTOs.Orders;
 using ELBORAI.Application.DTOs.Payment;
 using ELBORAI.Application.Interfaces.Services;
 using ELBORAI.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ELBORAI.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class PaymentController : ControllerBase
 {
     private readonly IPaymentService _paymentService;
@@ -28,6 +30,7 @@ public class PaymentController : ControllerBase
         return Ok(payment);
     }
 
+    [Authorize(Roles = "ADMIN")]
     [HttpPut("order/{orderId:int}/status")]
     public async Task<IActionResult> UpdateStatus(
         int orderId,

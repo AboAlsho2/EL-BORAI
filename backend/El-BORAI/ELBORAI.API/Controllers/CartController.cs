@@ -1,12 +1,14 @@
 using ELBORAI.Application.DTOs.Cart;
 using ELBORAI.Application.DTOs.Carts;
 using ELBORAI.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ELBORAI.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CartController : ControllerBase
 {
     private readonly ICartService _cartService;

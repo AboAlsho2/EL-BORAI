@@ -5,7 +5,7 @@ import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/productpages/ProductsPage";
 import ProductDetailsPage from "./pages/productpages/ProductDetailsPage";
-import CartPage from "./pages/CartPage";
+import CartPage from "./pages/cartpages/CartPage";
 import ComingSoonPage from "./pages/ComingSoonPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import MerchantProductsPage from "./pages/merchantpages/MerchantProductsPage";
